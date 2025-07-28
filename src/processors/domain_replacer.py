@@ -86,6 +86,7 @@ class DomainReplacer:
                 "total_rows": len(df),
                 "old_domain": old_domain,
                 "new_domain": new_domain,
+                "generated_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
             }
 
         except Exception as e:

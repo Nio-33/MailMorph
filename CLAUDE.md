@@ -315,7 +315,9 @@ When reporting issues, include:
 ## License
 MIT License - See LICENSE file for details
 
----
+## Claude's Memories
 
-**MailMorph v1.0.0** - Built with Flask, Pandas, and Bootstrap
-*Secure, fast, and reliable email domain transformation*
+### Project Interactions
+- Assisted in understanding MailMorph's architecture and functionality
+- Provided guidance on project structure and best practices
+- Helped clarify security considerations and performance optimization strategies

@@ -7,7 +7,7 @@
 
 **MailMorph** is a powerful, secure Flask-based web application that transforms email domains in CSV files. Perfect for company migrations, rebranding, email list management, and bulk domain updates.
 
-![MailMorph Screenshot](https://via.placeholder.com/800x400?text=MailMorph+Interface)
+<!-- ![MailMorph Screenshot](screenshot.png) - Screenshot coming soon -->
 
 ---
 
@@ -35,20 +35,19 @@ python run.py
 ### Option 2: Production Deployment
 
 ```bash
-# Use the production startup script
-chmod +x start.sh
-./start.sh
+# Install production server
+pip install gunicorn
+
+# Run with Gunicorn
+gunicorn --bind 0.0.0.0:5000 --workers 2 wsgi:app
 ```
 
 ### Option 3: Docker Deployment
+*Docker configuration files coming soon*
 
 ```bash
-# Using Docker Compose
-docker-compose up -d
-
-# Or build and run manually
-docker build -t mailmorph .
-docker run -p 5000:5000 mailmorph
+# Standard Python deployment for now
+python run.py
 ```
 
 **Access the application at:** `http://localhost:5000`
@@ -126,7 +125,7 @@ Mike Johnson,mike.johnson@innovatetech.com,Sales,(555) 345-6789
 ## 🏗️ Architecture
 
 ```
-mailmorph/
+MailMorph/
 ├── 📄 app.py                   # Main Flask application
 ├── ⚙️  config.py               # Configuration management
 ├── 🚀 run.py                   # Development server
@@ -226,13 +225,12 @@ gunicorn --bind 0.0.0.0:5000 --workers 2 wsgi:app
 ```
 
 ### Docker Deployment
-```bash
-# Build and run
-docker build -t mailmorph .
-docker run -p 5000:5000 -e SECRET_KEY=your-secret-key mailmorph
+*Docker configuration files coming soon*
 
-# Using Docker Compose
-docker-compose up -d
+```bash
+# For now, use standard Python deployment
+pip install gunicorn
+gunicorn --bind 0.0.0.0:5000 -e SECRET_KEY=your-secret-key wsgi:app
 ```
 
 ### Production Environment Variables
@@ -362,7 +360,7 @@ tail -f logs/mailmorph.log | grep ERROR
 
 ## 🤝 Contributing
 
-We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
+We welcome contributions! Please open an issue or submit a pull request.
 
 ### Quick Start
 1. Fork the repository

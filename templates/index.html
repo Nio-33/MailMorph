@@ -3,35 +3,38 @@
 {% block content %}
 <section class="hero-section">
     <h1 class="hero-title">MailMorph</h1>
-    <p class="hero-subtitle">Transform email domains in bulk — fast, secure, and futuristic.</p>
+    <p class="hero-subtitle">Transform email domains in bulk — fast, secure, and reliable.</p>
 </section>
 
 <form id="uploadForm" action="{{ url_for('upload_file') }}" method="post" enctype="multipart/form-data">
     <section class="glass-card">
-        <h3>1. Upload Your File</h3>
-        <div class="upload-zone" id="dropZone">
-            <div class="upload-icon"><i class="bi bi-cloud-arrow-up-fill"></i></div>
-            <h4>Drag & Drop CSV or TXT</h4>
-            <p>Supports up to 16MB — processed securely on-server</p>
-            <button type="button" class="btn-future" style="margin-top: 1rem;">Browse Files</button>
-            <input type="file" id="file" name="file" accept=".csv,.txt" required style="display: none;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: start;">
+            <div>
+                <h3>Upload Your File</h3>
+                <div class="upload-zone" id="dropZone">
+                    <div class="upload-icon"><i class="bi bi-cloud-arrow-up-fill"></i></div>
+                    <h4>Drag & Drop CSV or TXT</h4>
+                    <p>Supports up to 16MB</p>
+                    <button type="button" class="btn-future" style="margin-top: 1rem;">Browse Files</button>
+                    <input type="file" id="file" name="file" accept=".csv,.txt" required style="display: none;">
+                </div>
+                <div id="filePreview" style="margin-top: 1rem; text-align: center; color: var(--neon-green);"></div>
+            </div>
+            <div>
+                <h3>Replace Domain</h3>
+                <div class="form-group">
+                    <label for="old_domain" class="form-label">Current Domain:</label>
+                    <input type="text" class="form-input" id="old_domain" name="old_domain" placeholder="e.g., oldcompany.com" required>
+                    <div class="input-error"></div>
+                </div>
+                <div class="form-group">
+                    <label for="new_domain" class="form-label">New Domain:</label>
+                    <input type="text" class="form-input" id="new_domain" name="new_domain" placeholder="e.g., newcompany.com" required>
+                    <div class="input-error"></div>
+                </div>
+            </div>
         </div>
-        <div id="filePreview" style="margin-top: 1rem; text-align: center; color: var(--neon-green);"></div>
-    </section>
-
-    <section class="glass-card">
-        <h3>2. Replace Domain</h3>
-        <div class="form-group">
-            <label for="old_domain" class="form-label">Current Domain</label>
-            <input type="text" class="form-input" id="old_domain" name="old_domain" placeholder="e.g., oldcompany.com" required>
-            <div class="input-error"></div>
-        </div>
-        <div class="form-group">
-            <label for="new_domain" class="form-label">New Domain</label>
-            <input type="text" class="form-input" id="new_domain" name="new_domain" placeholder="e.g., newcompany.com" required>
-            <div class="input-error"></div>
-        </div>
-        <button type="submit" class="btn-future">Transform Emails</button>
+        <button type="submit" class="btn-future" style="width: 100%; margin-top: 2rem;">Transform Emails</button>
     </section>
 </form>
 

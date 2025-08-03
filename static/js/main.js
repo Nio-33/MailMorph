@@ -1,324 +1,180 @@
-// MailMorph - Main JavaScript
-document.addEventListener('DOMContentLoaded', function() {
-    // Get DOM elements
+document.addEventListener('DOMContentLoaded', function () {
+    // --- Particle Animation --- //
+    const canvas = document.getElementById('particle-canvas');
+    if (canvas) {
+        const ctx = canvas.getContext('2d');
+        let width = (canvas.width = window.innerWidth);
+        let height = (canvas.height = window.innerHeight);
+        const particles = [];
+        const particleCount = 60;
+        const colors = ["#3B82F6", "#10B981", "#60A5FA", "#0EA5E9", "#8B5CF6"];
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.size = Math.random() * 3 + 1;
+                this.speedX = (Math.random() - 0.5) * 0.5;
+                this.speedY = (Math.random() - 0.5) * 0.5;
+                this.color = colors[Math.floor(Math.random() * colors.length)];
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                if (this.x > width) this.x = 0;
+                if (this.x < 0) this.x = width;
+                if (this.y > height) this.y = 0;
+                if (this.y < 0) this.y = height;
+            }
+            draw() {
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function initParticles() {
+            for (let i = 0; i < particleCount; i++) {
+                particles.push(new Particle());
+            }
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, width, height);
+            ctx.fillStyle = "#0F172A";
+            ctx.fillRect(0, 0, width, height);
+            particles.forEach((p) => {
+                p.update();
+                p.draw();
+            });
+            connectParticles();
+            requestAnimationFrame(animateParticles);
+        }
+
+        function connectParticles() {
+            for (let i = 0; i < particles.length; i++) {
+                for (let j = i + 1; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    if (distance < 100) {
+                        ctx.strokeStyle = `rgba(59, 130, 246, ${1 - distance / 120})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.beginPath();
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+        }
+
+        window.addEventListener("resize", () => {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        });
+
+        initParticles();
+        animateParticles();
+    }
+
+    // --- Form Handling --- //
+    const uploadForm = document.getElementById('uploadForm');
     const dropZone = document.getElementById('dropZone');
     const fileInput = document.getElementById('file');
     const filePreview = document.getElementById('filePreview');
-    const fileName = document.getElementById('fileName');
-    const uploadForm = document.getElementById('uploadForm');
-    const submitBtn = document.getElementById('submitBtn');
     const oldDomainInput = document.getElementById('old_domain');
     const newDomainInput = document.getElementById('new_domain');
 
-    // Drag and drop functionality
-    if (dropZone && fileInput) {
-        // Prevent default drag behaviors
+    if (dropZone) {
+        dropZone.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', () => handleFiles(fileInput.files));
+
         ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
             dropZone.addEventListener(eventName, preventDefaults, false);
-            document.body.addEventListener(eventName, preventDefaults, false);
         });
 
-        // Highlight drop zone when item is dragged over it
         ['dragenter', 'dragover'].forEach(eventName => {
-            dropZone.addEventListener(eventName, highlight, false);
+            dropZone.addEventListener(eventName, () => dropZone.classList.add('dragover'), false);
         });
 
         ['dragleave', 'drop'].forEach(eventName => {
-            dropZone.addEventListener(eventName, unhighlight, false);
+            dropZone.addEventListener(eventName, () => dropZone.classList.remove('dragover'), false);
         });
 
-        // Handle dropped files
-        dropZone.addEventListener('drop', handleDrop, false);
-
-        // Handle file input change
-        fileInput.addEventListener('change', function(e) {
-            handleFiles(e.target.files);
-        });
-
-        // Click to browse functionality
-        dropZone.addEventListener('click', function(e) {
-            if (e.target.tagName !== 'BUTTON' && e.target.tagName !== 'INPUT') {
-                fileInput.click();
-            }
-        });
+        dropZone.addEventListener('drop', (e) => handleFiles(e.dataTransfer.files), false);
     }
 
-    // Form validation
-    if (uploadForm) {
-        uploadForm.addEventListener('submit', function(e) {
-            if (!validateForm()) {
-                e.preventDefault();
-                return false;
-            }
-            
-            // Show loading state
-            showLoadingState();
-        });
-    }
-
-    // Real-time domain validation
-    if (oldDomainInput) {
-        oldDomainInput.addEventListener('input', function() {
-            validateDomain(this, 'oldDomainFeedback');
-        });
-    }
-
-    if (newDomainInput) {
-        newDomainInput.addEventListener('input', function() {
-            validateDomain(this, 'newDomainFeedback');
-        });
-    }
-
-    // Utility functions
     function preventDefaults(e) {
         e.preventDefault();
         e.stopPropagation();
     }
 
-    function highlight(e) {
-        dropZone.classList.add('drag-over');
-    }
-
-    function unhighlight(e) {
-        dropZone.classList.remove('drag-over');
-    }
-
-    function handleDrop(e) {
-        const dt = e.dataTransfer;
-        const files = dt.files;
-        handleFiles(files);
-    }
-
     function handleFiles(files) {
-        if (files.length > 0) {
-            const file = files[0];
-            
-            // Validate file type
-            const allowedTypes = ['text/csv', 'text/plain', 'application/vnd.ms-excel'];
-            const fileExtension = file.name.split('.').pop().toLowerCase();
-            
-            if (!allowedTypes.includes(file.type) && !['csv', 'txt'].includes(fileExtension)) {
-                showAlert('Invalid file type. Please select a CSV or TXT file.', 'danger');
-                return;
-            }
+        if (files.length === 0) return;
+        const file = files[0];
 
-            // Validate file size (16MB)
-            const maxSize = 16 * 1024 * 1024;
-            if (file.size > maxSize) {
-                showAlert('File is too large. Maximum size is 16MB.', 'danger');
-                return;
-            }
-
-            // Update file input
-            const dataTransfer = new DataTransfer();
-            dataTransfer.items.add(file);
-            fileInput.files = dataTransfer.files;
-
-            // Show file preview
-            showFilePreview(file);
-        }
-    }
-
-    function showFilePreview(file) {
-        const dropZoneContent = dropZone.querySelector('.drop-zone-content');
-        const filePreview = dropZone.querySelector('.drop-zone-preview');
-        
-        if (dropZoneContent && filePreview && fileName) {
-            dropZoneContent.style.display = 'none';
-            filePreview.classList.remove('d-none');
-            fileName.textContent = file.name;
-            
-            // Add file size info
-            const fileSize = formatFileSize(file.size);
-            fileName.textContent += ` (${fileSize})`;
-        }
-    }
-
-    function formatFileSize(bytes) {
-        if (bytes === 0) return '0 Bytes';
-        const k = 1024;
-        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-        const i = Math.floor(Math.log(bytes) / Math.log(k));
-        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-    }
-
-    function validateDomain(input, feedbackId) {
-        const domain = input.value.trim();
-        const feedbackElement = document.getElementById(feedbackId);
-        
-        if (!domain) {
-            input.classList.remove('is-valid', 'is-invalid');
-            if (feedbackElement) feedbackElement.textContent = '';
-            return true;
-        }
-
-        const domainRegex = /^[a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?(\.[a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?)*$/;
-        const isValid = domainRegex.test(domain) && domain.length <= 253;
-
-        if (isValid) {
-            input.classList.remove('is-invalid');
-            input.classList.add('is-valid');
-            if (feedbackElement) feedbackElement.textContent = '';
-        } else {
-            input.classList.remove('is-valid');
-            input.classList.add('is-invalid');
-            if (feedbackElement) feedbackElement.textContent = 'Please enter a valid domain (e.g., example.com)';
-        }
-
-        return isValid;
-    }
-
-    function validateForm() {
-        let isValid = true;
-
-        // Validate file
-        if (!fileInput.files || fileInput.files.length === 0) {
-            showAlert('Please select a file to upload.', 'danger');
-            isValid = false;
-        }
-
-        // Validate domains
-        const oldDomainValid = validateDomain(oldDomainInput, 'oldDomainFeedback');
-        const newDomainValid = validateDomain(newDomainInput, 'newDomainFeedback');
-
-        if (!oldDomainValid || !newDomainValid) {
-            isValid = false;
-        }
-
-        // Check if domains are different
-        const oldDomain = oldDomainInput.value.trim().toLowerCase();
-        const newDomain = newDomainInput.value.trim().toLowerCase();
-        
-        if (oldDomain && newDomain && oldDomain === newDomain) {
-            showAlert('Old and new domains must be different.', 'danger');
-            isValid = false;
-        }
-
-        return isValid;
-    }
-
-    function showLoadingState() {
-        if (submitBtn) {
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>Processing...';
-            submitBtn.classList.add('loading');
-        }
-    }
-
-    function showAlert(message, type) {
-        // Create alert element
-        const alertDiv = document.createElement('div');
-        alertDiv.className = `alert alert-${type === 'danger' ? 'danger' : 'info'} alert-dismissible fade show`;
-        alertDiv.innerHTML = `
-            <i class="bi bi-${type === 'danger' ? 'exclamation-triangle' : 'info-circle'}-fill me-2"></i>
-            ${message}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        `;
-
-        // Insert alert at the top of main content
-        const main = document.querySelector('main');
-        if (main) {
-            main.insertBefore(alertDiv, main.firstChild);
-        }
-
-        // Auto-dismiss after 5 seconds
-        setTimeout(() => {
-            if (alertDiv.parentNode) {
-                alertDiv.remove();
-            }
-        }, 5000);
-    }
-
-    // Clear file function (global)
-    window.clearFile = function() {
-        if (fileInput) {
+        if (!isValidFile(file)) {
+            filePreview.textContent = 'Invalid file. Please use CSV or TXT, under 16MB.';
             fileInput.value = '';
+            return;
         }
-        
-        const dropZoneContent = dropZone.querySelector('.drop-zone-content');
-        const filePreview = dropZone.querySelector('.drop-zone-preview');
-        
-        if (dropZoneContent && filePreview) {
-            dropZoneContent.style.display = 'block';
-            filePreview.classList.add('d-none');
-        }
-    };
 
-    // API call for domain validation (optional enhancement)
-    function validateDomainsAPI(oldDomain, newDomain) {
-        return fetch('/api/validate', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                old_domain: oldDomain,
-                new_domain: newDomain
-            })
-        })
-        .then(response => response.json())
-        .catch(error => {
-            console.error('Validation API error:', error);
-            return { old_domain_valid: true, new_domain_valid: true, domains_different: true };
+        // Create a new DataTransfer object and add the file.
+        const dataTransfer = new DataTransfer();
+        dataTransfer.items.add(file);
+        fileInput.files = dataTransfer.files;
+
+        filePreview.textContent = `Selected: ${file.name}`;
+    }
+
+    function isValidFile(file) {
+        const allowedTypes = ['text/csv', 'text/plain', 'application/vnd.ms-excel'];
+        const extension = file.name.split('.').pop().toLowerCase();
+        return (allowedTypes.includes(file.type) || ['csv', 'txt'].includes(extension)) && file.size <= 16 * 1024 * 1024;
+    }
+
+    if (uploadForm) {
+        uploadForm.addEventListener('submit', function (e) {
+            const isOldValid = validateDomain(oldDomainInput);
+            const isNewValid = validateDomain(newDomainInput);
+
+            if (!fileInput.files[0]) {
+                alert('Please select a file.');
+                e.preventDefault();
+                return;
+            }
+
+            if (!isOldValid || !isNewValid || oldDomainInput.value.trim() === newDomainInput.value.trim()) {
+                if(oldDomainInput.value.trim() === newDomainInput.value.trim()) {
+                    setError(newDomainInput, 'Domains must be different.');
+                }
+                e.preventDefault();
+                return;
+            }
         });
     }
 
-    // Enhanced form validation with API call (optional)
-    async function validateFormEnhanced() {
-        const basicValidation = validateForm();
-        if (!basicValidation) return false;
-
-        const oldDomain = oldDomainInput.value.trim();
-        const newDomain = newDomainInput.value.trim();
-
-        try {
-            const validation = await validateDomainsAPI(oldDomain, newDomain);
-            
-            if (!validation.old_domain_valid) {
-                showAlert('Invalid old domain format.', 'danger');
-                return false;
-            }
-            
-            if (!validation.new_domain_valid) {
-                showAlert('Invalid new domain format.', 'danger');
-                return false;
-            }
-            
-            if (!validation.domains_different) {
-                showAlert('Old and new domains must be different.', 'danger');
-                return false;
-            }
-            
-            return true;
-        } catch (error) {
-            console.error('Enhanced validation error:', error);
-            return basicValidation; // Fall back to basic validation
-        }
-    }
-
-    // Keyboard shortcuts
-    document.addEventListener('keydown', function(e) {
-        // Ctrl/Cmd + O to open file dialog
-        if ((e.ctrlKey || e.metaKey) && e.key === 'o') {
-            e.preventDefault();
-            if (fileInput) {
-                fileInput.click();
-            }
-        }
-        
-        // Enter to submit form when form fields are focused
-        if (e.key === 'Enter' && (e.target === oldDomainInput || e.target === newDomainInput)) {
-            e.preventDefault();
-            if (uploadForm && validateForm()) {
-                uploadForm.submit();
-            }
-        }
+    [oldDomainInput, newDomainInput].forEach(input => {
+        input.addEventListener('input', () => validateDomain(input));
     });
 
-    // Auto-focus first input on page load
-    if (oldDomainInput) {
-        oldDomainInput.focus();
+    function validateDomain(input) {
+        const domainRegex = /^[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        if (input.value.trim() === '' || !domainRegex.test(input.value.trim())) {
+            setError(input, 'Please enter a valid domain.');
+            return false;
+        }
+        clearError(input);
+        return true;
     }
 
-    console.log('MailMorph JavaScript initialized successfully');
+    function setError(input, message) {
+        input.nextElementSibling.textContent = message;
+    }
+
+    function clearError(input) {
+        input.nextElementSibling.textContent = '';
+    }
 });

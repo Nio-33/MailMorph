@@ -1,149 +1,39 @@
 {% extends "base.html" %}
 
-{% block title %}Results - MailMorph{% endblock %}
+{% block title %}Success - MailMorph{% endblock %}
 
 {% block content %}
-<div class="row">
-    <div class="col-lg-8 mx-auto">
-        <!-- Success Header -->
-        <div class="text-center mb-4">
-            <div class="success-icon mb-3">
-                <i class="bi bi-check-circle-fill display-1 text-success"></i>
-            </div>
-            <h1 class="display-4 fw-bold text-success mb-2">
-                Transformation Complete!
-            </h1>
-            <p class="lead text-muted">
-                Your email domains have been successfully updated
-            </p>
+<section class="hero-section">
+    <h1 class="hero-title">✅ Transformation Complete</h1>
+    <p class="hero-subtitle">Successfully updated domains while preserving data structure.</p>
+</section>
+
+<section class="glass-card">
+    <h3>Results</h3>
+    <div class="results-stats">
+        <div class="stat-item">
+            <span class="stat-number">{{ result.changes_made }}</span>
+            <span class="stat-label">Emails Updated</span>
         </div>
-
-        <!-- Results Card -->
-        <div class="card shadow-lg border-0 mb-4">
-            <div class="card-header bg-success text-white py-3">
-                <h5 class="card-title mb-0">
-                    <i class="bi bi-graph-up me-2"></i>
-                    Transformation Results
-                </h5>
-            </div>
-            <div class="card-body p-4">
-                <!-- Statistics -->
-                <div class="row text-center mb-4">
-                    <div class="col-md-3">
-                        <div class="stat-box">
-                            <h2 class="display-5 fw-bold text-primary">{{ result.changes_made }}</h2>
-                            <p class="text-muted mb-0">Emails Updated</p>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="stat-box">
-                            <h2 class="display-5 fw-bold text-info">{{ result.total_rows }}</h2>
-                            <p class="text-muted mb-0">Total Rows</p>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="stat-box">
-                            <h2 class="display-5 fw-bold text-warning">{{ ((result.changes_made / result.total_rows) * 100) | round(1) }}%</h2>
-                            <p class="text-muted mb-0">Success Rate</p>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="stat-box">
-                            <h2 class="display-5 fw-bold text-success">
-                                <i class="bi bi-check-lg"></i>
-                            </h2>
-                            <p class="text-muted mb-0">Status</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Transformation Details -->
-                <div class="alert alert-info border-0 mb-4">
-                    <h6 class="alert-heading">
-                        <i class="bi bi-info-circle me-1"></i>
-                        Transformation Details
-                    </h6>
-                    <div class="row align-items-center">
-                        <div class="col-md-5 text-center">
-                            <span class="badge bg-danger fs-6 p-2">
-                                <i class="bi bi-at me-1"></i>{{ result.old_domain }}
-                            </span>
-                        </div>
-                        <div class="col-md-2 text-center">
-                            <i class="bi bi-arrow-right display-6 text-primary"></i>
-                        </div>
-                        <div class="col-md-5 text-center">
-                            <span class="badge bg-success fs-6 p-2">
-                                <i class="bi bi-at me-1"></i>{{ result.new_domain }}
-                            </span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Download Section -->
-                <div class="text-center">
-                    <h5 class="mb-3">
-                        <i class="bi bi-download me-2"></i>
-                        Download Your Updated File
-                    </h5>
-                    <a href="{{ url_for('download_file', filename=result.output_file) }}" 
-                       class="btn btn-success btn-lg me-3">
-                        <i class="bi bi-cloud-download me-2"></i>
-                        Download CSV File
-                    </a>
-                    <a href="{{ url_for('index') }}" class="btn btn-outline-primary btn-lg">
-                        <i class="bi bi-plus-circle me-2"></i>
-                        Transform Another File
-                    </a>
-                </div>
-
-                <!-- File Info -->
-                <div class="mt-4 pt-3 border-top">
-                    <div class="row text-center">
-                        <div class="col-md-6">
-                            <small class="text-muted">
-                                <i class="bi bi-file-earmark-text me-1"></i>
-                                File: {{ result.output_file }}
-                            </small>
-                        </div>
-                        <div class="col-md-6">
-                            <small class="text-muted">
-                                <i class="bi bi-clock me-1"></i>
-                                Generated: {{ result.generated_at }}
-                            </small>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div class="stat-item">
+            <span class="stat-number">{{ result.total_rows }}</span>
+            <span class="stat-label">Total Rows</span>
         </div>
-
-        <!-- Important Notes -->
-        <div class="alert alert-warning border-0">
-            <h6 class="alert-heading">
-                <i class="bi bi-exclamation-triangle me-1"></i>
-                Important Notes
-            </h6>
-            <ul class="mb-0">
-                <li><strong>File Expiration:</strong> Download link will expire in 30 minutes</li>
-                <li><strong>Data Integrity:</strong> All non-email data remains unchanged</li>
-                <li><strong>File Format:</strong> Original CSV structure and formatting preserved</li>
-                <li><strong>Security:</strong> Files are automatically deleted from our servers</li>
-            </ul>
+        <div class="stat-item">
+            <span class="stat-number">{{ ((result.changes_made / result.total_rows) * 100) | round(1) }}%</span>
+            <span class="stat-label">Success Rate</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-number"><i class="bi bi-shield-check"></i></span>
+            <span class="stat-label">Secure & Auto-Cleaned</span>
         </div>
     </div>
-</div>
-{% endblock %}
+    <div style="text-align: center; margin-top: 2rem;">
+        <a href="{{ url_for('download_file', filename=result.output_file) }}" class="btn-future">Download Result</a>
+    </div>
+</section>
 
-{% block extra_scripts %}
-<script>
-// Auto-refresh countdown could be added here
-setTimeout(function() {
-    const alerts = document.querySelectorAll('.alert-warning');
-    alerts.forEach(alert => {
-        alert.classList.add('alert-danger');
-        alert.classList.remove('alert-warning');
-        alert.querySelector('.alert-heading').innerHTML = '<i class="bi bi-clock me-1"></i>Download Link Expiring Soon';
-    });
-}, 25 * 60 * 1000); // 25 minutes
-</script>
+<div style="text-align: center; margin-top: 2rem;">
+    <a href="{{ url_for('index') }}" style="color: var(--primary-blue-light);">Transform another file</a>
+</div>
 {% endblock %}

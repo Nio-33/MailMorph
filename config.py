@@ -4,7 +4,8 @@ Handles environment variables and application settings
 """
 
 import os
-from typing import Dict, Any, Optional
+from typing import Any, Dict, Optional
+
 from dotenv import load_dotenv
 
 # Load environment variables
@@ -249,8 +250,8 @@ def setup_logging(config: Config) -> None:
         config: Configuration object
     """
     import logging
-    from logging.handlers import RotatingFileHandler
     import os
+    from logging.handlers import RotatingFileHandler
 
     # Create logs directory if it doesn't exist
     log_dir = os.path.dirname(config.LOG_FILE)

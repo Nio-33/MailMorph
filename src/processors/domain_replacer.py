@@ -3,11 +3,12 @@ Domain Replacement Processor
 Handles the core logic for replacing email domains in CSV files
 """
 
-import pandas as pd
-import re
 import os
+import re
 from datetime import datetime
-from typing import Dict, Any
+from typing import Any, Dict
+
+import pandas as pd
 
 
 class DomainReplacer:
@@ -54,7 +55,7 @@ class DomainReplacer:
 
             changes_made = 0
             email_pattern = rf"([a-zA-Z0-9._%+-]+)@{re.escape(old_domain)}"
-            replacement = rf"\\1@{new_domain}"
+            replacement = rf"\1@{new_domain}"
 
             # Process each column
             for col in df.columns:
@@ -114,7 +115,7 @@ class DomainReplacer:
                 return {"success": False, "error": "CSV file is empty"}
 
             email_pattern = rf"([a-zA-Z0-9._%+-]+)@{re.escape(old_domain)}"
-            replacement = rf"\\1@{new_domain}"
+            replacement = rf"\1@{new_domain}"
 
             preview_data = []
             total_matches = 0

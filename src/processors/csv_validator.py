@@ -3,9 +3,10 @@ CSV Validation Processor
 Handles validation of CSV files and their content
 """
 
-import pandas as pd
 import re
-from typing import Dict, Any, List
+from typing import Any, Dict, List
+
+import pandas as pd
 
 
 class CSVValidator:

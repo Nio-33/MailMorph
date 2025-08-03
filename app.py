@@ -3,23 +3,24 @@ MailMorph - Email Domain Replacer Tool
 Main Flask Application (Refactored)
 """
 
-import os
 import logging
+import os
+
 from flask import (
     Flask,
+    flash,
+    jsonify,
+    redirect,
     render_template,
     request,
-    jsonify,
     send_file,
-    flash,
-    redirect,
     url_for,
 )
 
 # Import our modular components
 from config import get_config, setup_logging
-from src.processors.domain_replacer import DomainReplacer
 from src.processors.csv_validator import CSVValidator
+from src.processors.domain_replacer import DomainReplacer
 from src.utils.file_handler import FileHandler, is_allowed_file_type
 from src.utils.security import SecurityValidator, sanitize_domain_input
 

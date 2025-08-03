@@ -6,13 +6,14 @@ Run this script to start the Flask development server
 
 import os
 import sys
+
 from app import app
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Ensure we're in the right directory
     script_dir = os.path.dirname(os.path.abspath(__file__))
     os.chdir(script_dir)
-    
+
     # Print startup information
     print("🚀 Starting MailMorph Development Server...")
     print(f"📁 Working directory: {os.getcwd()}")
@@ -24,16 +25,16 @@ if __name__ == '__main__':
     print("=" * 50)
     print("Press Ctrl+C to stop the server")
     print()
-    
+
     try:
         # Start the Flask development server
         app.run(
-            host='0.0.0.0',  # Listen on all interfaces
-            port=5001,       # Port 5001 (avoiding conflicts)
-            debug=True,      # Enable debug mode
+            host="0.0.0.0",  # Listen on all interfaces
+            port=5001,  # Port 5001 (avoiding conflicts)
+            debug=True,  # Enable debug mode
             use_reloader=True,  # Auto-reload on file changes
             use_debugger=True,  # Enable debugger
-            threaded=True    # Handle multiple requests
+            threaded=True,  # Handle multiple requests
         )
     except KeyboardInterrupt:
         print("\n👋 MailMorph server stopped. Goodbye!")

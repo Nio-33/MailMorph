@@ -4,7 +4,7 @@
 
 {% block content %}
 <section class="hero-section">
-    <h1 class="hero-title">✅ Transformation Complete</h1>
+    <h1 class="hero-title">Transformation Complete</h1>
     <p class="hero-subtitle">Successfully updated domains while preserving data structure.</p>
 </section>
 
@@ -34,6 +34,12 @@
 </section>
 
 <div style="text-align: center; margin-top: 2rem;">
-    <a href="{{ url_for('index') }}" style="color: var(--primary-blue-light);">Transform another file</a>
+    <a href="{{ url_for('index') }}" style="color: var(--primary-blue-light); font-weight: bold; font-size: 1.1rem;">Transform another file</a>
 </div>
+{% endblock %}
+
+{% block footer %}
+<footer style="border-top: none; position: fixed; bottom: 0; left: 0; width: 100%; z-index: 1000; background: var(--bg-indigo); padding: 1rem 2rem;">
+    Built with precision for secure data transformation | <span style="font-style: italic;">Powered by <a href="https://niostudio.com" style="color: var(--neon-green); text-decoration: none;">Niostudio</a></span>
+</footer>
 {% endblock %}

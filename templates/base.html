@@ -26,10 +26,11 @@
         {% block content %}{% endblock %}
     </div>
 
+    {% block footer %}
     <footer>
-        Built with ❤️ for secure data transformation | 
-        <a href="https://github.com/Nio-33/MailMorph">GitHub</a> • <span style="font-style: italic;">Powered by <a href="https://niostudio.com" style="color: var(--neon-green); text-decoration: none;">Niostudio</a></span>
+        Built with precision for secure data transformation | <span style="font-style: italic;">Powered by <a href="https://niostudio.com" style="color: var(--neon-green); text-decoration: none;">Niostudio</a></span>
     </footer>
+    {% endblock %}
 
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
     {% block extra_scripts %}{% endblock %}

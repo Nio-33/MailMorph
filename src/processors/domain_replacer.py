@@ -91,7 +91,7 @@ class DomainReplacer:
             }
 
         except Exception as e:
-            return {"success": False, "error": f"Error processing file: {str(e)}"}
+            return {"success": False, "error": "Unable to process file. Please ensure it's a valid CSV with proper formatting and try again."}
 
     def preview_changes(
         self, filepath: str, old_domain: str, new_domain: str, sample_size: int = 10
@@ -161,4 +161,4 @@ class DomainReplacer:
             }
 
         except Exception as e:
-            return {"success": False, "error": f"Error previewing file: {str(e)}"}
+            return {"success": False, "error": "Unable to preview file changes. Please verify the file format and try again."}

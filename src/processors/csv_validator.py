@@ -80,9 +80,12 @@ class CSVValidator:
         except pd.errors.EmptyDataError:
             return {"valid": False, "error": "CSV file is empty or has no data"}
         except pd.errors.ParserError as e:
-            return {"valid": False, "error": f"CSV parsing error: {str(e)}"}
+            return {
+                "valid": False, 
+                "error": "Invalid file format. Please ensure your file is a properly formatted CSV with consistent columns and data structure."
+            }
         except Exception as e:
-            return {"valid": False, "error": f"Error validating file: {str(e)}"}
+            return {"valid": False, "error": "Unable to validate file. Please ensure it's a properly formatted CSV or TXT file and try again."}
 
     def analyze_email_content(
         self, filepath: str, domain: str = None
@@ -184,7 +187,7 @@ class CSVValidator:
         except Exception as e:
             return {
                 "success": False,
-                "error": f"Error analyzing email content: {str(e)}",
+                "error": "Unable to analyze email content. Please verify the file contains valid data.",
             }
 
     def validate_csv_headers(
@@ -228,7 +231,7 @@ class CSVValidator:
             return result
 
         except Exception as e:
-            return {"valid": False, "error": f"Error validating headers: {str(e)}"}
+            return {"valid": False, "error": "Unable to validate file headers. Please ensure the CSV has proper column headers."}
 
     def detect_delimiter(self, filepath: str) -> Dict[str, Any]:
         """
@@ -269,4 +272,4 @@ class CSVValidator:
                 }
 
         except Exception as e:
-            return {"success": False, "error": f"Error detecting delimiter: {str(e)}"}
+            return {"success": False, "error": "Unable to detect file format. Please ensure the file uses standard CSV formatting."}
